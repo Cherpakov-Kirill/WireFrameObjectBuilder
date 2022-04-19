@@ -13,7 +13,7 @@ import javax.swing.*;
 
 public class ObjectPanel extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener {
     private final Dimension panelSize;          // visible image size
-    private BufferedImage img;           // image to view
+    private BufferedImage img;                  // image to view
     private Dimension imSize = null;            // real image size
     private final JScrollPane spIm;
     private int lastX = 0, lastY = 0;           // last captured mouse coordinates
@@ -33,11 +33,11 @@ public class ObjectPanel extends JPanel implements MouseListener, MouseMotionLis
      * Visible space will be painted in black.
      * <p>
      *
-     *  * @param scrollPane - JScrollPane to add a new Image-viewer
+     * @param scrollPane - JScrollPane to add a new Image-viewer
      * @param width      - start width of panel
      * @param height     - start height of panel
      */
-    public ObjectPanel( JScrollPane scrollPane, int width, int height) {
+    public ObjectPanel(JScrollPane scrollPane, int width, int height) {
         spIm = scrollPane;
         spIm.setWheelScrollingEnabled(false);
         spIm.setDoubleBuffered(true);
@@ -120,10 +120,10 @@ public class ObjectPanel extends JPanel implements MouseListener, MouseMotionLis
             for (int line = 0; line < numberOfLinesPerSection; line++) {
                 int numberOfLine = section * numberOfLinesPerSection + line;
                 for (int pointInLine = 0; pointInLine < numberOfIntervalsInSpline; pointInLine++) {
-                    int x = getXOnImage(points[numberOfLine][pointInLine*numberOfSplinePointsPerInterval].x);
-                    int y = getYOnImage(points[numberOfLine][pointInLine*numberOfSplinePointsPerInterval].y);
-                    int xNext = getXOnImage(points[(numberOfLine+1)%numberOfTurns][pointInLine*numberOfSplinePointsPerInterval].x);
-                    int yNext = getYOnImage(points[(numberOfLine+1)%numberOfTurns][pointInLine*numberOfSplinePointsPerInterval].y);
+                    int x = getXOnImage(points[numberOfLine][pointInLine * numberOfSplinePointsPerInterval].x);
+                    int y = getYOnImage(points[numberOfLine][pointInLine * numberOfSplinePointsPerInterval].y);
+                    int xNext = getXOnImage(points[(numberOfLine + 1) % numberOfTurns][pointInLine * numberOfSplinePointsPerInterval].x);
+                    int yNext = getYOnImage(points[(numberOfLine + 1) % numberOfTurns][pointInLine * numberOfSplinePointsPerInterval].y);
                     g.drawLine(x, y, xNext, yNext);
                 }
             }
@@ -171,7 +171,7 @@ public class ObjectPanel extends JPanel implements MouseListener, MouseMotionLis
             g.fillRect(0, 0, width, height);
             g.setRenderingHint(RenderingHints.KEY_RENDERING,
                     RenderingHints.VALUE_RENDER_QUALITY);
-            g.drawImage(img, (newImgWidth - img.getWidth())/2, (newImgHeight - img.getHeight())/2, img.getWidth(), img.getHeight(), null);
+            g.drawImage(img, (newImgWidth - img.getWidth()) / 2, (newImgHeight - img.getHeight()) / 2, img.getWidth(), img.getHeight(), null);
             g.dispose();
             img = newResizedImage;
             repaint();
@@ -187,7 +187,7 @@ public class ObjectPanel extends JPanel implements MouseListener, MouseMotionLis
         setScrollPnMiddle();
     }
 
-    private void setScrollPnMiddle(){
+    private void setScrollPnMiddle() {
         Dimension bounds = getVisibleRectSize();
 
         JScrollBar horizontal = spIm.getHorizontalScrollBar();
@@ -204,9 +204,6 @@ public class ObjectPanel extends JPanel implements MouseListener, MouseMotionLis
         panelSize.height = height;
     }
 
-    /**
-     * @return Dimension object with the current view-size
-     */
     private Dimension getVisibleRectSize() {
         // maximum size for panel without scrolling (inner border of the ScrollPane)
         Dimension viewportSize = spIm.getViewport().getSize();
@@ -233,7 +230,7 @@ public class ObjectPanel extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        int currDegreeY = rotDegreeY + (lastX- e.getX());
+        int currDegreeY = rotDegreeY + (lastX - e.getX());
         int currDegreeZ = rotDegreeZ + (e.getY() - lastY);
         object.rotate(currDegreeY, currDegreeZ);
         drawObject(object.getCamProjectionPoints(), img.getWidth(), img.getHeight());
@@ -241,7 +238,7 @@ public class ObjectPanel extends JPanel implements MouseListener, MouseMotionLis
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        rotDegreeY += (lastX- e.getX());
+        rotDegreeY += (lastX - e.getX());
         rotDegreeZ += (e.getY() - lastY);
     }
 
