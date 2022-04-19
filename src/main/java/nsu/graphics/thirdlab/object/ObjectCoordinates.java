@@ -6,8 +6,9 @@ import java.util.List;
 import static nsu.graphics.thirdlab.MathUtils.*;
 
 public class ObjectCoordinates {
-    private int camPos;
-    private int distanceToProjection;
+    private static final int screenIncreaseSize = 400;
+    private final double camPos;
+    private double distanceToProjection;
     private final Point3D[][] localObjectPoints;
     private final Point3D[][] globalObjectPoints;
     private final Point[][] camProjectionPoints;
@@ -48,19 +49,21 @@ public class ObjectCoordinates {
     }
 
     private void initLocalObjectPoints(List<Point> splinePoints) {
-        int maxRadius = 0;
+        double maxRadius = 0;
         for (int i = 0; i < numberOfPointsInLine; i++) {
             Point point2D = splinePoints.get(i);
             maxRadius = Math.max(maxRadius, Math.abs(point2D.x));
             maxRadius = Math.max(maxRadius, Math.abs(point2D.y));
-            localObjectPoints[0][i] = new Point3D(point2D.x, point2D.y, 0);
         }
-        camPos = - maxRadius - 200;
+        for (int i = 0; i < numberOfPointsInLine; i++) {
+            Point point2D = splinePoints.get(i);
+            localObjectPoints[0][i] = new Point3D(point2D.x / maxRadius, point2D.y / maxRadius, 0);
+        }
         for (int turn = 1; turn < numberOfColumns; turn++) {
             for (int i = 0; i < numberOfPointsInLine; i++) {
                 Point3D point = localObjectPoints[turn - 1][i];
                 double[][] result = matrixMultiplying(rotateX, new double[][]{{point.x()}, {point.y()}, {point.z()}, {1}});
-                localObjectPoints[turn][i] = new Point3D((int) Math.round(result[0][0]), (int) Math.round(result[1][0]), (int) Math.round(result[2][0]));
+                localObjectPoints[turn][i] = new Point3D(result[0][0], result[1][0], result[2][0]);
             }
         }
     }
@@ -78,8 +81,8 @@ public class ObjectCoordinates {
         for (int turn = 0; turn < numberOfColumns; turn++) {
             for (int i = 0; i < numberOfPointsInLine; i++) {
                 Point3D point = globalObjectPoints[turn][i];
-                double mul = (double) distanceToProjection / point.z();
-                camProjectionPoints[turn][i] = new Point((int) Math.round(point.x() * mul), (int) Math.round(point.y() * mul));
+                double mul = distanceToProjection / point.z();
+                camProjectionPoints[turn][i] = new Point((int) Math.round(point.x() * mul * screenIncreaseSize), (int) Math.round(point.y() * mul * screenIncreaseSize));
             }
         }
     }
@@ -89,11 +92,12 @@ public class ObjectCoordinates {
     }
 
     public void increaseDistanceToProjection(int delta) {
-        this.distanceToProjection -= delta;
+        this.distanceToProjection -= delta * (0.2);
         initCamProjectionPoints();
     }
 
     public ObjectCoordinates(List<Point> splinePoints, int numberOfSections, int numberLinesPerSection) {
+        camPos = -10;
         numberOfColumns = numberOfSections * numberLinesPerSection;
         numberOfPointsInLine = splinePoints.size();
         double deltaPhi = 360.0 / numberOfColumns;
@@ -104,8 +108,8 @@ public class ObjectCoordinates {
         initRotateXOperator(deltaPhi);
         initLocalObjectPoints(splinePoints);
         initGlobalObjectPoints();
-        this.distanceToProjection = 200;
-        increaseDistanceToProjection(0);
+        this.distanceToProjection = 5.0;
+        initCamProjectionPoints();
     }
 
 
@@ -117,7 +121,7 @@ public class ObjectCoordinates {
                 Point3D point = localObjectPoints[turn][i];
                 double[][] result = matrixMultiplying(rotateY, new double[][]{{point.x()}, {point.y()}, {point.z()}, {1}});
                 result = matrixMultiplying(rotateZ, result);
-                globalObjectPoints[turn][i] = new Point3D((int) Math.round(result[0][0]), (int) Math.round(result[1][0]), (int) Math.round(result[2][0]) - camPos);
+                globalObjectPoints[turn][i] = new Point3D(result[0][0], result[1][0], result[2][0] - camPos);
             }
         }
         initCamProjectionPoints();

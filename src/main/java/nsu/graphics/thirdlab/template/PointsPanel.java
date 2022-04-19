@@ -27,7 +27,7 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
 
     private Color keyPointsColor;
     private Color splineColor;
-    private int pointSize;
+    private final int circleSize;
 
     /**
      * Creates default Image-viewer in the given JScrollPane.
@@ -52,7 +52,7 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
         addMouseWheelListener(this);
         keyPointsColor = Color.RED;
         splineColor = Color.BLUE;
-        pointSize = 24;
+        circleSize = 24;
         keyPoints = new LinkedList<>();
         keyPoints.add(new Point(-400, -200));
         keyPoints.add(new Point(-400, 0));
@@ -185,7 +185,7 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
     }
 
     void drawCircle(Graphics2D g, int x, int y) {
-        g.drawOval(x - pointSize / 2, y - pointSize / 2, pointSize, pointSize);
+        g.drawOval(x - circleSize / 2, y - circleSize / 2, circleSize, circleSize);
     }
 
     private void setPoints(int width, int height) {
@@ -308,10 +308,6 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
         panelSize.height = height;
     }
 
-    private void setPanelSize(Dimension dimension) {
-        setPanelSize(dimension.width, dimension.height);
-    }
-
     /**
      * @return Dimension object with the current view-size
      */
@@ -322,18 +318,6 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
         else return viewportSize;
     }
 
-    /**
-     * Sets panelSize to the maximum available view-size with hidden scroll bars.
-     */
-    private void setMaxVisibleRectSize() {
-        // maximum size for panel without scrolling (inner border of the ScrollPane)
-        setPanelSize(getVisibleRectSize().width, getVisibleRectSize().height);    // max size, but possibly with enabled scroll-bars
-        revalidate();
-        spIm.validate();
-        setPanelSize(getVisibleRectSize().width, getVisibleRectSize().height);    // max size, without enabled scroll-bars
-        revalidate();
-    }
-
     ///SCROLL OF IMAGE
 
     private void setView(Rectangle rect) {
@@ -341,7 +325,6 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
     }
 
     private void setView(Rectangle rect, int minSize) {
-        // should also take into account ScrollBars size
         if (img == null) return;
         if (imSize.width < minSize || imSize.height < minSize) return;
 
@@ -370,7 +353,6 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
 
         revalidate();
         spIm.validate();
-        // сначала нужно, чтобы scroll понял новый размер, потом сдвигать
 
         int xc = rect.x + rect.width / 2, yc = rect.y + rect.height / 2;
         xc = (int) (xc / k);
@@ -424,10 +406,9 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
         scroll.x += x;
         scroll.y += y;
 
-        repaint();    // можно и убрать
+        repaint();
         revalidate();
         spIm.validate();
-        // сначала нужно, чтобы scroll понял новый размер, потом сдвигать
         spIm.getHorizontalScrollBar().setValue(scroll.x);
         spIm.getVerticalScrollBar().setValue(scroll.y);
         spIm.repaint();
@@ -464,8 +445,8 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
             Point point = keyPoints.get(i);
             int xMouseAxis = getXOnAxis(lastX);
             int yMouseAxis = getYOnAxis(lastY);
-            double r = Math.sqrt(Math.pow((double) (point.x - xMouseAxis), 2.0) + Math.pow((double) (point.y - yMouseAxis), 2.0));
-            if (r <= pointSize) {
+            double r = Math.sqrt(Math.pow((point.x - xMouseAxis), 2.0) + Math.pow((point.y - yMouseAxis), 2.0));
+            if (r <= circleSize) {
                 xMouseAxis = getXOnAxis(e.getX());
                 yMouseAxis = getYOnAxis(e.getY());
                 keyPoints.set(i, new Point(xMouseAxis, yMouseAxis));
@@ -496,7 +477,6 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
 
         int x1 = e.getX();
         int y1 = e.getY();
-        // Исключаем клик
         if (Math.abs(x1 - lastX) < 5 && Math.abs(y1 - lastY) < 5) return;
 
         double k = (double) imSize.width / panelSize.width;

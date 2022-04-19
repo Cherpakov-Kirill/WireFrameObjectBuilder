@@ -40,9 +40,12 @@ public class WireframeObjectWindow extends MainFrame implements ComponentListene
             addToolBarButton("View/Normalize");
             addToolBarButton("View/Create template");
 
-            objectPanel = new ObjectPanel(685, 395);
+
+            JScrollPane scrollPane = new JScrollPane();
+            objectPanel = new ObjectPanel(scrollPane, 685, 395);
+            scrollPane.setViewportView(objectPanel);
             templateWindow = new WireframeTemplateWindow(this);
-            add(objectPanel);
+            add(scrollPane);
             addComponentListener(this);
             setBackground(Color.WHITE);
         } catch (Exception e) {
