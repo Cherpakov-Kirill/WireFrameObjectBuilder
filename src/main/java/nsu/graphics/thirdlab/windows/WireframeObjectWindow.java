@@ -28,6 +28,7 @@ public class WireframeObjectWindow extends MainFrame implements ComponentListene
 
             addSubMenu("View", KeyEvent.VK_V);
             addMenuItem("View/Normalize", "Normalize object position", KeyEvent.VK_F, "/FitImage.png", "normalize");
+            addMenuItem("View/Palette", "Palette", KeyEvent.VK_P, "/Palette.png", "chooseObjectColor");
             addMenuItem("View/Create template", "Change key-points position", KeyEvent.VK_F, "/Settings.png", "createTemplate");
 
             addSubMenu("Help", KeyEvent.VK_H);
@@ -38,6 +39,7 @@ public class WireframeObjectWindow extends MainFrame implements ComponentListene
             addToolBarButton("File/Save as");
             addToolBarSeparator();
             addToolBarButton("View/Normalize");
+            addToolBarButton("View/Palette");
             addToolBarButton("View/Create template");
 
 
@@ -85,6 +87,14 @@ public class WireframeObjectWindow extends MainFrame implements ComponentListene
     //View/Fit to screen
     public void normalize() {
         objectPanel.normalizeObject();
+    }
+
+    //View/Palette
+    public void chooseObjectColor() {
+        Color color = JColorChooser.showDialog(this,
+                "Choose color", Color.BLACK);
+        if(color != null) objectPanel.setObjectColor(color);
+
     }
 
     //File/Exit - exits application

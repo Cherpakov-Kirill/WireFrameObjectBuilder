@@ -22,7 +22,7 @@ public class ObjectPanel extends JPanel implements MouseListener, MouseMotionLis
     private int numberOfSections;
     private int numberOfLinesPerSection;
     private int numberOfSplinePoints;
-    private final Color objectColor;
+    private Color objectColor;
     private int rotDegreeY;
     private int rotDegreeZ;
     private int numberOfIntervalsInSpline;
@@ -57,6 +57,11 @@ public class ObjectPanel extends JPanel implements MouseListener, MouseMotionLis
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         if (img != null) g2d.drawImage(img, 0, 0, panelSize.width, panelSize.height, null);
+    }
+
+    public void setObjectColor(Color color) {
+        objectColor = color;
+        drawObject(object.getCamProjectionPoints(), img.getWidth(), img.getHeight());
     }
 
     private int getXOnImage(int x) {
