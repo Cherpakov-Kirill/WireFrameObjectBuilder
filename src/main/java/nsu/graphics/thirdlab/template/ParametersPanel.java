@@ -33,7 +33,6 @@ public class ParametersPanel extends JPanel {
     private final JTextField x;
     private final JTextField y;
 
-
     private void initParameterLine(String text, JTextField field, ActionListener increase, ActionListener decrease) {
         JLabel label = new JLabel(text);
 
@@ -54,13 +53,13 @@ public class ParametersPanel extends JPanel {
         K.setText(String.valueOf(newK));
         pointNumber.setSelectedIndex(0);
         setNumberOfPointsForPointChooser(newK);
-        updateCoordinates();
+        updateCoordinatesInPointSubPanel();
         N.setText(String.valueOf(newN));
         m.setText(String.valueOf(newm));
         M.setText(String.valueOf(newM));
     }
 
-    private void updateCoordinates() {
+    private void updateCoordinatesInPointSubPanel() {
         Point p = listener.getPointPosition(pointNumber.getSelectedIndex());
         x.setText(String.valueOf(p.x));
         y.setText(String.valueOf(p.y));
@@ -75,7 +74,7 @@ public class ParametersPanel extends JPanel {
                 pointNumber.setSelectedIndex(pointNumbersVector.size() - 2);
             pointNumbersVector.subList(pointNumbersVector.size() + deltaK, pointNumbersVector.size()).clear();
         }
-        updateCoordinates();
+        updateCoordinatesInPointSubPanel();
     }
 
     public ParametersPanel(ParametersListener listener, int numberOfSegmentsPerInterval) {
@@ -118,17 +117,9 @@ public class ParametersPanel extends JPanel {
             listener.setNumberOfSegmentsPerInterval(Integer.parseInt(N.getText()));
         });
         m = new JTextField(String.valueOf(minm), 2);
-        initParameterLine("m", m, e -> {
-            increaseValueInField(m, minm, maxm);
-        }, e -> {
-            decreaseValueInField(m, minm, maxm);
-        });
+        initParameterLine("m", m, e -> increaseValueInField(m, minm, maxm), e -> decreaseValueInField(m, minm, maxm));
         M = new JTextField(String.valueOf(2), 2);
-        initParameterLine("M", M, e -> {
-            increaseValueInField(M, minM, maxM);
-        }, e -> {
-            decreaseValueInField(M, minM, maxM);
-        });
+        initParameterLine("M", M, e -> increaseValueInField(M, minM, maxM), e -> decreaseValueInField(M, minM, maxM));
 
         JPanel points = new JPanel(new GridLayout(3, 2));
         points.setBorder(BorderFactory.createTitledBorder("Points"));
@@ -138,13 +129,9 @@ public class ParametersPanel extends JPanel {
         x = new JTextField(String.valueOf(pos.x), 4);
         y = new JTextField(String.valueOf(pos.y), 4);
 
-        pointNumber.addActionListener(e -> updateCoordinates());
-        x.addActionListener(e -> {
-            listener.changePointPosition(pointNumber.getSelectedIndex(), new Point(Integer.parseInt(x.getText()), Integer.parseInt(y.getText())));
-        });
-        y.addActionListener(e -> {
-            listener.changePointPosition(pointNumber.getSelectedIndex(), new Point(Integer.parseInt(x.getText()), Integer.parseInt(y.getText())));
-        });
+        pointNumber.addActionListener(e -> updateCoordinatesInPointSubPanel());
+        x.addActionListener(e -> listener.changePointPosition(pointNumber.getSelectedIndex(), new Point(Integer.parseInt(x.getText()), Integer.parseInt(y.getText()))));
+        y.addActionListener(e -> listener.changePointPosition(pointNumber.getSelectedIndex(), new Point(Integer.parseInt(x.getText()), Integer.parseInt(y.getText()))));
         points.add(labelNum);
         points.add(pointNumber);
 
@@ -220,6 +207,32 @@ public class ParametersPanel extends JPanel {
         add(values);
         add(points);
         add(changeNumberOfPointsButtons);
+
+        JPanel colors = new JPanel(new GridLayout(2, 2));
+        colors.setBorder(BorderFactory.createTitledBorder("Set colors"));
+        JLabel splineLabel = new JLabel("Spline");
+        JButton splineColor = new JButton();
+        splineColor.setToolTipText("Spline color");
+        splineColor.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Palette.png"))));
+        splineColor.addActionListener(e -> {
+            Color color = JColorChooser.showDialog(this,
+                    "Choose color", Color.BLACK);
+            if (color != null) listener.setSplineColor(color);
+        });
+        colors.add(splineLabel);
+        colors.add(splineColor);
+        JLabel pointsLabel = new JLabel("Points");
+        JButton pointsColor = new JButton();
+        pointsColor.setToolTipText("Key-points color");
+        pointsColor.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/Palette.png"))));
+        pointsColor.addActionListener(e -> {
+            Color color = JColorChooser.showDialog(this,
+                    "Choose color", Color.BLACK);
+            if (color != null) listener.setKeyPointsColor(color);
+        });
+        colors.add(pointsLabel);
+        colors.add(pointsColor);
+        add(colors);
         add(buttons);
         listener.acceptTemplate(Integer.parseInt(N.getText()), Integer.parseInt(K.getText()), Integer.parseInt(m.getText()), Integer.parseInt(M.getText()));
     }

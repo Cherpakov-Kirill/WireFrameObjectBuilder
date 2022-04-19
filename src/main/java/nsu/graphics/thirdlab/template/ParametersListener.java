@@ -24,4 +24,8 @@ public interface ParametersListener {
     Point getPointPosition(int numberOfPoint);
 
     void changePointPosition(int index, Point point);
+
+    void setSplineColor(Color color);
+
+    void setKeyPointsColor(Color color);
 }

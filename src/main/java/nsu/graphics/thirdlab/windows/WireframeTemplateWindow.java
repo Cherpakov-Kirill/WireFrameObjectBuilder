@@ -17,8 +17,7 @@ public class WireframeTemplateWindow extends JFrame implements ParametersListene
     private static final int numberOfSegmentsPerInterval = 2;
     private final PointsPanel pointsPanel;
     private final ParametersPanel parametersPanel;
-    private TemplateWindowListener listener;
-    private JScrollPane scrollPane;
+    private final TemplateWindowListener listener;
 
     public WireframeTemplateWindow(TemplateWindowListener listener) {
         super("Object Template");
@@ -28,7 +27,7 @@ public class WireframeTemplateWindow extends JFrame implements ParametersListene
         this.listener = listener;
         try {
             setLayout(new BorderLayout());
-            scrollPane = new JScrollPane();
+            JScrollPane scrollPane = new JScrollPane();
             pointsPanel = new PointsPanel(scrollPane, 1000, 400, numberOfSegmentsPerInterval);
             scrollPane.setViewportView(pointsPanel);
 
@@ -65,6 +64,16 @@ public class WireframeTemplateWindow extends JFrame implements ParametersListene
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void setSplineColor(Color color) {
+        pointsPanel.setSplineColor(color);
+    }
+
+    @Override
+    public void setKeyPointsColor(Color color) {
+        pointsPanel.setKeyPointsColor(color);
     }
 
     @Override

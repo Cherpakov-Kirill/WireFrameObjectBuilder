@@ -94,7 +94,6 @@ public class WireframeObjectWindow extends MainFrame implements ComponentListene
         Color color = JColorChooser.showDialog(this,
                 "Choose color", Color.BLACK);
         if(color != null) objectPanel.setObjectColor(color);
-
     }
 
     //File/Exit - exits application
