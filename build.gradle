@@ -20,7 +20,7 @@ test {
 }
 
 jar {
-    manifest.attributes("Main-Class": "nsu/graphics/secondlab/PhotoCorrectorWindow")
+    manifest.attributes("Main-Class": "nsu/graphics/thirdlab/windows/WireframeObjectWindow")
     doFirst {
         from {
             configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }

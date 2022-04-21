@@ -2,13 +2,10 @@ package ru.nsu.cg;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * MainFrame - main application frame
@@ -275,9 +272,9 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Creates toolbar button which will behave exactly like specified menuitem
+     * Creates toolbar button which will behave exactly like specified menuItem
      *
-     * @param item - menuitem to create toolbar button from
+     * @param item - menuItem to create toolbar button from
      * @return created toolbar button
      */
     public JButton createToolBarButton(JMenuItem item) {
@@ -289,7 +286,7 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Creates toolbar button which will behave exactly like specified menuitem
+     * Creates toolbar button which will behave exactly like specified menuItem
      *
      * @param menuPath - path to menu item to create toolbar button from
      * @return created toolbar button
@@ -302,7 +299,7 @@ public class MainFrame extends JFrame {
     }
 
     /**
-     * Creates toolbar button which will behave exactly like specified menuitem and adds it to the toolbar
+     * Creates toolbar button which will behave exactly like specified menuItem and adds it to the toolbar
      *
      * @param menuPath - path to menu item to create toolbar button from
      */

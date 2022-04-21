@@ -17,8 +17,6 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
     private final double zoomK = 0.05;          // scroll zoom coefficient
     private double zoomCoefficient;             // scroll zoom value
     private Dimension imSize;
-    private int reminderWidth;
-    private int reminderHeight;
 
     private List<Point> keyPoints;
 
@@ -34,11 +32,13 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
      * Visible space will be painted in black.
      * <p>
      *
-     * @param scrollPane - JScrollPane to add a new Image-viewer
-     * @param width      - start width of panel
-     * @param height     - start height of panel
+     * @param scrollPane  - JScrollPane to add a new Image-viewer
+     * @param width       - start width of panel
+     * @param height      - start height of panel
+     * @param pointsColor - color of key-point lines
+     * @param splineColor - color of a spline
      */
-    public PointsPanel(JScrollPane scrollPane, int width, int height, int numberOfSegmentsPerInterval) {
+    public PointsPanel(JScrollPane scrollPane, int width, int height, int numberOfSegmentsPerInterval, int pointsColor, int splineColor) {
         this.numberOfSegmentsPerInterval = numberOfSegmentsPerInterval;
         zoomCoefficient = 1;
         spIm = scrollPane;
@@ -50,8 +50,8 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
-        keyPointsColor = Color.RED;
-        splineColor = Color.BLUE;
+        keyPointsColor = new Color(pointsColor);
+        this.splineColor = new Color(splineColor);
         circleSize = 24;
         keyPoints = new LinkedList<>();
         keyPoints.add(new Point(-400, -200));
@@ -85,11 +85,11 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
         }
     }
 
-    public List<Point> getSplinePoints(){
+    public List<Point> getSplinePoints() {
         return spline.getSplinePoints();
     }
 
-    public List<Point> getKeyPoints(){
+    public List<Point> getKeyPoints() {
         return keyPoints;
     }
 
@@ -106,7 +106,6 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
         this.spline = new Spline(keyPoints, N);
         setPoints(img.getWidth(), img.getHeight());
     }
-
 
 
     public void changePointPosition(int index, Point point) {
@@ -285,10 +284,6 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
     }
 
     ///IMAGE VIEW
-
-    /**
-     * Sets normalized image on view.
-     */
     public void normalize() {
         Dimension bounds = getVisibleRectSize();
 
@@ -300,9 +295,7 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
         spIm.repaint();
     }
 
-
     ///SIZE OF PANEL
-
     private void setPanelSize(int width, int height) {
         panelSize.width = width;
         panelSize.height = height;
@@ -316,6 +309,11 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
         Dimension viewportSize = spIm.getViewport().getSize();
         if (viewportSize.height == 0) return new Dimension(spIm.getWidth() - 3, spIm.getHeight() - 3);
         else return viewportSize;
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return panelSize;
     }
 
     ///SCROLL OF IMAGE
@@ -363,11 +361,6 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
         spIm.paintAll(spIm.getGraphics());
     }
 
-    @Override
-    public Dimension getPreferredSize() {
-        return panelSize;
-    }
-
     /**
      * Change zoom when scrolling
      */
@@ -413,12 +406,6 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
         spIm.getVerticalScrollBar().setValue(scroll.y);
         spIm.repaint();
     }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -494,6 +481,9 @@ public class PointsPanel extends JPanel implements MouseListener, MouseMotionLis
     }
 
     ///NOT USED
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
 
     @Override
     public void mouseEntered(MouseEvent e) {

@@ -1,4 +1,4 @@
-package nsu.graphics.thirdlab.windows;
+package nsu.graphics.thirdlab;
 
 import nsu.graphics.thirdlab.template.Parameters;
 import org.json.JSONArray;

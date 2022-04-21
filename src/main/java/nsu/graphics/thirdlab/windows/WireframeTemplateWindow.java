@@ -1,5 +1,6 @@
 package nsu.graphics.thirdlab.windows;
 
+import nsu.graphics.thirdlab.JSONUtils;
 import nsu.graphics.thirdlab.template.Parameters;
 import nsu.graphics.thirdlab.template.ParametersListener;
 import nsu.graphics.thirdlab.template.ParametersPanel;
@@ -19,16 +20,16 @@ public class WireframeTemplateWindow extends JFrame implements ParametersListene
     private final ParametersPanel parametersPanel;
     private final TemplateWindowListener listener;
 
-    public WireframeTemplateWindow(TemplateWindowListener listener) {
+    public WireframeTemplateWindow(TemplateWindowListener listener, int templateWindowWidth, int templateWindowHeight, int pointsColor, int splineColor) {
         super("Object Template");
-        setSize(1000, 600);
+        setSize(templateWindowWidth, templateWindowHeight);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         ///setAlwaysOnTop(true);
         this.listener = listener;
         try {
             setLayout(new BorderLayout());
             JScrollPane scrollPane = new JScrollPane();
-            pointsPanel = new PointsPanel(scrollPane, 1000, 400, numberOfSegmentsPerInterval);
+            pointsPanel = new PointsPanel(scrollPane, templateWindowWidth, templateWindowHeight / 3 * 2, numberOfSegmentsPerInterval, pointsColor, splineColor);
             scrollPane.setViewportView(pointsPanel);
 
             parametersPanel = new ParametersPanel(this, numberOfSegmentsPerInterval);
@@ -47,7 +48,7 @@ public class WireframeTemplateWindow extends JFrame implements ParametersListene
             Parameters parameters = JSONUtils.readJson(file);
             parametersPanel.setValues(parameters.K(), parameters.N(), parameters.m(), parameters.M());
             pointsPanel.setPoints(parameters.keyPoints(), parameters.N());
-            acceptTemplate(parameters.N(),parameters.K(),parameters.m(), parameters.M());
+            acceptTemplate(parameters.N(), parameters.K(), parameters.m(), parameters.M());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -69,11 +70,13 @@ public class WireframeTemplateWindow extends JFrame implements ParametersListene
     @Override
     public void setSplineColor(Color color) {
         pointsPanel.setSplineColor(color);
+        listener.setSplineColorToProp(color.getRGB());
     }
 
     @Override
     public void setKeyPointsColor(Color color) {
         pointsPanel.setKeyPointsColor(color);
+        listener.setKeyPointsColorToProp(color.getRGB());
     }
 
     @Override

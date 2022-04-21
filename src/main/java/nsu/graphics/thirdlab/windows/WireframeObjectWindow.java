@@ -5,9 +5,13 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 import javax.swing.*;
 
+import nsu.graphics.thirdlab.PropertyList;
 import nsu.graphics.thirdlab.object.ObjectPanel;
 import ru.nsu.cg.MainFrame;
 
@@ -17,9 +21,11 @@ public class WireframeObjectWindow extends MainFrame implements ComponentListene
     private final WireframeTemplateWindow templateWindow;
 
     private final String[] extensions;
+    PropertyList propertyList;
 
-    public WireframeObjectWindow() {
-        super(800, 600, "Wireframe Object Builder");
+    public WireframeObjectWindow(PropertyList propertyList) {
+        super(propertyList.wireframeObjectWindowWidth, propertyList.wireframeObjectWindowHeight, "Wireframe Object Builder");
+        this.propertyList = propertyList;
         try {
             addSubMenu("File", KeyEvent.VK_F);
             addMenuItem("File/Open", "Open a file", KeyEvent.VK_O, "/Open.png", "openFile");
@@ -42,11 +48,10 @@ public class WireframeObjectWindow extends MainFrame implements ComponentListene
             addToolBarButton("View/Palette");
             addToolBarButton("View/Create template");
 
-
             JScrollPane scrollPane = new JScrollPane();
-            objectPanel = new ObjectPanel(scrollPane, 685, 395);
+            objectPanel = new ObjectPanel(scrollPane, propertyList.wireframeObjectWindowWidth, propertyList.wireframeObjectWindowHeight, propertyList.objectColor);
             scrollPane.setViewportView(objectPanel);
-            templateWindow = new WireframeTemplateWindow(this);
+            templateWindow = new WireframeTemplateWindow(this, propertyList.templateWindowWidth, propertyList.templateWindowHeight, propertyList.pointsColor, propertyList.splineColor);
             add(scrollPane);
             addComponentListener(this);
             setBackground(Color.WHITE);
@@ -59,7 +64,21 @@ public class WireframeObjectWindow extends MainFrame implements ComponentListene
 
     @Override
     public void setTemplate(List<Point> splinePoints, int N, int K, int m, int M) {
-        objectPanel.setTemplate(splinePoints,N,K,m,M);
+        objectPanel.setTemplate(splinePoints, N, K, m, M);
+    }
+
+    @Override
+    public void setSplineColorToProp(int rgb) {
+        propertyList.setSplineColor(rgb);
+    }
+
+    @Override
+    public void setKeyPointsColorToProp(int rgb) {
+        propertyList.setPointsColor(rgb);
+    }
+
+    public void setObjectColorToProp(int rgb) {
+        propertyList.setObjectColor(rgb);
     }
 
     //File/Open - opens any image file
@@ -93,7 +112,10 @@ public class WireframeObjectWindow extends MainFrame implements ComponentListene
     public void chooseObjectColor() {
         Color color = JColorChooser.showDialog(this,
                 "Choose color", Color.BLACK);
-        if(color != null) objectPanel.setObjectColor(color);
+        if (color != null) {
+            objectPanel.setObjectColor(color);
+            setObjectColorToProp(color.getRGB());
+        }
     }
 
     //File/Exit - exits application
@@ -112,7 +134,7 @@ public class WireframeObjectWindow extends MainFrame implements ComponentListene
     }
 
     public static void main(String[] args) {
-        WireframeObjectWindow mainFrame = new WireframeObjectWindow();
+        WireframeObjectWindow mainFrame = new WireframeObjectWindow(new PropertyList());
         mainFrame.setVisible(true);
     }
 
@@ -123,16 +145,13 @@ public class WireframeObjectWindow extends MainFrame implements ComponentListene
 
     @Override
     public void componentMoved(ComponentEvent e) {
-
     }
 
     @Override
     public void componentShown(ComponentEvent e) {
-
     }
 
     @Override
     public void componentHidden(ComponentEvent e) {
-
     }
 }

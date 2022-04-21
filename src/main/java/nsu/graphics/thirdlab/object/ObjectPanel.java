@@ -33,11 +33,12 @@ public class ObjectPanel extends JPanel implements MouseListener, MouseMotionLis
      * Visible space will be painted in black.
      * <p>
      *
-     * @param scrollPane - JScrollPane to add a new Image-viewer
-     * @param width      - start width of panel
-     * @param height     - start height of panel
+     * @param scrollPane  - JScrollPane to add a new Image-viewer
+     * @param width       - start width of panel
+     * @param height      - start height of panel
+     * @param objectColor - color of an object on screen
      */
-    public ObjectPanel(JScrollPane scrollPane, int width, int height) {
+    public ObjectPanel(JScrollPane scrollPane, int width, int height, int objectColor) {
         spIm = scrollPane;
         spIm.setWheelScrollingEnabled(false);
         spIm.setDoubleBuffered(true);
@@ -45,7 +46,7 @@ public class ObjectPanel extends JPanel implements MouseListener, MouseMotionLis
         panelSize = new Dimension(width, height);
         spIm.validate();
         img = createEmptyImage(width, height);
-        objectColor = Color.BLACK;
+        this.objectColor = new Color(objectColor);
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(this);
